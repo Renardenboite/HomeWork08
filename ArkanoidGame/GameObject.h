@@ -20,14 +20,17 @@ namespace ArkanoidGame
 
 		virtual void Init() {}
 		virtual void Update(float timeDelta) = 0;
-		virtual void Draw(sf::RenderWindow& window) {} 
+		virtual void Draw(sf::RenderWindow& window) { DrawSprite(sprite, window); }
+		virtual void restart() {}
 
 		const sf::Vector2f& GetPosition() const { return sprite.getPosition(); }
 		const sf::FloatRect GetRect() const { return sprite.getGlobalBounds(); }
 		void SetPosition(const sf::Vector2f& pos) { sprite.setPosition(pos); }
+		
 
 	protected:
 		sf::Sprite sprite;
 		sf::Texture texture;
+		const sf::Vector2f startPosition;
 	};
 }

@@ -14,22 +14,50 @@ namespace ArkanoidGame
 {
 	void Platform::Init()
 	{
-		assert(texture.loadFromFile(TEXTURES_PATH + TEXTURE_ID + ".png"));
+		assert(texture.loadFromFile(SETTINGS.TEXTURES_PATH + TEXTURE_ID + ".png"));
 
-		InitSprite(sprite, PLATFORM_WIDTH, PLATFORM_HEIGHT, texture);
-		sprite.setPosition({ SCREEN_WIDTH / 2.0, SCREEN_HEIGHT - PLATFORM_HEIGHT / 2.f });
+		InitSprite(sprite, SETTINGS.PLATFORM_WIDTH, SETTINGS.PLATFORM_HEIGHT, texture);
+		sprite.setPosition({ SETTINGS.SCREEN_WIDTH / 2.f, SETTINGS.SCREEN_HEIGHT - SETTINGS.PLATFORM_HEIGHT / 2.f });
 	}
 
 	void Platform::Update(float timeDelta)
 	{
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 		{
-			Move(-timeDelta * PLATFORM_SPEED);
+			Move(-timeDelta * SETTINGS.PLATFORM_SPEED);
 		}
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 		{
-			Move(timeDelta * PLATFORM_SPEED);
+			Move(timeDelta * SETTINGS.PLATFORM_SPEED);
 		}
+	}
+
+	Platform::Platform(const sf::Vector2f& position)
+	{
+		assert(texture.loadFromFile(SETTINGS.TEXTURES_PATH + TEXTURE_ID + ".png"));
+		InitSprite(sprite, SETTINGS.PLATFORM_WIDTH, SETTINGS.PLATFORM_HEIGHT, texture);
+		sprite.setPosition(position);
+	}
+
+	bool Platform::CheckCollision(std::shared_ptr<Collidable> collidable)
+	{
+		auto ball = std::static_pointer_cast<Ball>(collidable);
+		if (!ball) return false;
+
+		if (GetCollision(ball)) {
+			auto rect = GetRect();
+			float ballPosOnPlatform = (ball->GetPosition().x - (rect.left + rect.width / 2.f)) / (rect.width / 2.f);
+			ball->ChangeAngle(90.f - 20.f * ballPosOnPlatform);
+			return true;
+		}
+		return false;
+	}
+
+	bool Platform::GetCollision(std::shared_ptr<Collidable> collidable) const
+	{
+		auto ball = std::static_pointer_cast<Ball>(collidable);
+		if (!ball) return false;
+		return CheckCollisionWithBall(*ball);
 	}
 
 	void Platform::Draw(sf::RenderWindow& window)
@@ -40,11 +68,17 @@ namespace ArkanoidGame
 	{
 		sf::Vector2f position = sprite.getPosition();
 		float halfWidth = sprite.getGlobalBounds().width / 2.f;
-		position.x = std::clamp(position.x + speed, halfWidth, SCREEN_WIDTH - halfWidth);
+		position.x = std::clamp(position.x + speed, halfWidth, SETTINGS.SCREEN_WIDTH - halfWidth);
 		sprite.setPosition(position);
 	}
 
-	bool Platform::CheckCollisionWithBall(const Ball& ball)
+	void Platform::restart()
+	{
+		sprite.setPosition({ SETTINGS.SCREEN_WIDTH / 2.f,
+							 SETTINGS.SCREEN_HEIGHT - SETTINGS.PLATFORM_HEIGHT / 2.f });
+	}
+
+	bool Platform::CheckCollisionWithBall(const Ball& ball) const
 	{
 		auto sqr = [](float x) { return x * x;  };
 
@@ -53,14 +87,14 @@ namespace ArkanoidGame
 
 		if (ballPos.x < rect.left)
 		{
-			return sqr(ballPos.x - rect.left) + sqr(ballPos.y - rect.top) < sqr(BALL_SIZE / 2.0);
+			return sqr(ballPos.x - rect.left) + sqr(ballPos.y - rect.top) < sqr(SETTINGS.BALL_SIZE / 2.f);
 		}
 
 		if (ballPos.x > rect.left + rect.width)
 		{
-			return sqr(ballPos.x - rect.left - rect.width) + sqr(ballPos.y - rect.top) < sqr(BALL_SIZE / 2.0);
+			return sqr(ballPos.x - rect.left - rect.width) + sqr(ballPos.y - rect.top) < sqr(SETTINGS.BALL_SIZE / 2.f);
 		}
 
-		return std::fabs(ballPos.y - rect.top) <= BALL_SIZE / 2.0;
+		return std::fabs(ballPos.y - rect.top) <= SETTINGS.BALL_SIZE / 2.0;
 	}
 }

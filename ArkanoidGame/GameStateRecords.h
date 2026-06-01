@@ -15,12 +15,6 @@ namespace ArkanoidGame
 		void Update(float timeDelta) override;
 		void Draw(sf::RenderWindow& window) override;
 
-		/*GameStateRecordsData() = default;
-		GameStateRecordsData(const GameStateRecordsData&) = delete;
-		GameStateRecordsData& operator=(const GameStateRecordsData&) = delete;
-		GameStateRecordsData(GameStateRecordsData&&) = default;
-		GameStateRecordsData& operator=(GameStateRecordsData&&) = default;*/
-
 	private:
 		sf::Font font;
 

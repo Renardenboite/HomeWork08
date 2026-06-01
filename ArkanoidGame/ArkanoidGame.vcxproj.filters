@@ -58,6 +58,33 @@
     <ClCompile Include="GameStateVictory.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="BlockFactory.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelLoader.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreeHitBlock.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScore.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Bonus.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="BonusFactory.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="WidePlatformEffect.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="SlowBallEffect.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="ExtraBallEffect.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -118,5 +145,41 @@
     <ClInclude Include="IDelayedAction.h">
       <Filter>Sources</Filter>
     </ClInclude>
+    <ClInclude Include="BlockFactory.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelLoader.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreeHitBlock.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="IObserver.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScore.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Bonus.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="BonusEffect.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="BonusFactory.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="WidePlatformEffect.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="SlowBallEffect.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="ExtraBallEffect.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="levels.config" />
   </ItemGroup>
 </Project>

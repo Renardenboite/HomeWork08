@@ -11,7 +11,7 @@ namespace ArkanoidGame
 
 	void GameStateGameOverData::Init()
 	{
-		assert(font.loadFromFile(RESOURCES_PATH + "Fonts/Roboto-Regular.ttf"));
+		assert(font.loadFromFile(SETTINGS.RESOURCES_PATH + "Fonts/Roboto-Regular.ttf"));
 
 		timeSinceGameOver = 0.f;
 
@@ -26,7 +26,7 @@ namespace ArkanoidGame
 		gameOverText.setString("GAME OVER");
 		
 		recordsTableTexts.clear();
-		recordsTableTexts.reserve(MAX_RECORDS_TABLE_SIZE);
+		recordsTableTexts.reserve(SETTINGS.MAX_RECORDS_TABLE_SIZE);
 
 		std::multimap<int, std::string> sortedRecordsTable;
 		Game& game = Application::Instance().GetGame();
@@ -37,13 +37,10 @@ namespace ArkanoidGame
 
 		bool isSnakeInTable = false;
 		auto it = sortedRecordsTable.rbegin();
-		for (int i = 0; i < MAX_RECORDS_TABLE_SIZE && it != sortedRecordsTable.rend(); ++i, ++it) // Note, we can do several actions in for action block
+		for (int i = 0; i < SETTINGS.MAX_RECORDS_TABLE_SIZE && it != sortedRecordsTable.rend(); ++i, ++it) 
 		{
-			//recordsTableTexts.emplace_back(); // Create text in place
-			//sf::Text& text = recordsTableTexts.back();
 			auto text = std::make_unique<sf::Text>();
 
-			// We can use streams for writing into string and reading from it
 			std::stringstream sstream;
 			sstream << i + 1 << ". " << it->second << ": " << it->first;
 			text->setString(sstream.str());
@@ -67,7 +64,7 @@ namespace ArkanoidGame
 			auto& lastText = recordsTableTexts.back();
 			std::stringstream sstream;
 			int snakeScores = game.GetRecordByPlayerId(PLAYER_NAME);
-			sstream << MAX_RECORDS_TABLE_SIZE << ". " << PLAYER_NAME << ": " << snakeScores;
+			sstream << SETTINGS.MAX_RECORDS_TABLE_SIZE << ". " << PLAYER_NAME << ": " << snakeScores;
 			lastText->setString(sstream.str());  // -> גלוסעמ .
 			lastText->setFillColor(sf::Color::Green);
 		}
@@ -84,11 +81,11 @@ namespace ArkanoidGame
 		{
 			if (event.key.code == sf::Keyboard::Space)
 			{
-				Application::Instance().GetGame().SwitchStateTo(GameStateType::Playing);
+				Application::Instance().GetGame().StartGame();
 			}
 			else if (event.key.code == sf::Keyboard::Escape)
 			{
-				Application::Instance().GetGame().SwitchStateTo(GameStateType::MainMenu);
+				Application::Instance().GetGame().ExitGame();
 			}
 		}
 	}

@@ -10,14 +10,14 @@ namespace ArkanoidGame
 {
 	void GameStateRecordsData::Init()
 	{
-		assert(font.loadFromFile(RESOURCES_PATH + "Fonts/Roboto-Regular.ttf"));
+		const sf::Font& font = Application::Instance().GetGame().GetDefaultFont();
 
 		titleText.setString("RECORDS");
 		titleText.setFont(font);
 		titleText.setFillColor(sf::Color::Red);
 		titleText.setCharacterSize(48);
 
-		tableTexts.reserve(MAX_RECORDS_TABLE_SIZE);
+		tableTexts.reserve(SETTINGS.MAX_RECORDS_TABLE_SIZE);
 
 		const Game& game = Application::Instance().GetGame();
 		std::map<int, std::string> sortedRecordsTable;
@@ -27,13 +27,10 @@ namespace ArkanoidGame
 		}
 
 		auto it = sortedRecordsTable.rbegin();
-		for (int i = 0; i < MAX_RECORDS_TABLE_SIZE && it != sortedRecordsTable.rend(); ++i, ++it) // Note, we can do several actions in for action block
-		{
-			//tableTexts.emplace_back(); // Create text in place
-			//sf::Text& text = tableTexts.back();
+		for (int i = 0; i < SETTINGS.MAX_RECORDS_TABLE_SIZE && it != sortedRecordsTable.rend(); ++i, ++it) // Note, we can do several actions in for action block
+		{			
 			auto text = std::make_unique<sf::Text>();
 
-			// We can use streams for writing into string and reading from it
 			std::stringstream sstream;
 			sstream << i + 1 << ". " << it->second << ": " << it->first;
 			text->setString(sstream.str());
@@ -61,7 +58,6 @@ namespace ArkanoidGame
 
 	void GameStateRecordsData::Update(float timeDelta)
 	{
-
 	}
 
 	void GameStateRecordsData::Draw(sf::RenderWindow& window)
@@ -72,7 +68,6 @@ namespace ArkanoidGame
 		titleText.setPosition(viewSize.x / 2.f, 50.f);
 		window.draw(titleText);
 
-		// We need to create new vector here as DrawItemsList needs vector of pointers
 		std::vector<sf::Text*> textsList;
 		textsList.reserve(tableTexts.size());
 		for (auto& text : tableTexts)

@@ -17,13 +17,10 @@ namespace ArkanoidGame
 		if (!rootItem->childrens.empty()) {
 			SelectMenuItem(*rootItem->childrens.front());
 		}
-		//selectedItem = nullptr;
 	}
 
 	void Menu::SetupMenuItemFromSource(MenuItem& dest, const MenuItem& src, const sf::Font& font)
 	{
-		//dest.text = std::make_unique<sf::Text>();
-		//dest.hintText = std::make_unique<sf::Text>();
 		if (!dest.text) dest.text = std::make_unique<sf::Text>();
 		if (!dest.hintText) dest.hintText = std::make_unique<sf::Text>();
 
