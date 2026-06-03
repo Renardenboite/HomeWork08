@@ -20,23 +20,33 @@ namespace ArkanoidGame
 		tableTexts.reserve(SETTINGS.MAX_RECORDS_TABLE_SIZE);
 
 		const Game& game = Application::Instance().GetGame();
-		std::map<int, std::string> sortedRecordsTable;
-		for (const auto& item : game.GetRecordsTable())
-		{
-			sortedRecordsTable[item.second] = item.first;
+		const auto& records = game.GetRecordsTable();
+
+		std::vector<std::pair<std::string, int>> sorted;
+		for (const auto& [name, score] : records) {
+			sorted.emplace_back(name, score);
 		}
+		
+		
+		std::sort(sorted.begin(), sorted.end(),
+			[](const auto& a, const auto& b) {
+				return a.second > b.second;
+			});
 
-		auto it = sortedRecordsTable.rbegin();
-		for (int i = 0; i < SETTINGS.MAX_RECORDS_TABLE_SIZE && it != sortedRecordsTable.rend(); ++i, ++it) // Note, we can do several actions in for action block
-		{			
+		tableTexts.clear();
+		size_t count = std::min(sorted.size(), static_cast<size_t>(SETTINGS.MAX_RECORDS_TABLE_SIZE));
+
+		for (size_t i = 0; i < count; ++i)
+		{
 			auto text = std::make_unique<sf::Text>();
-
-			std::stringstream sstream;
-			sstream << i + 1 << ". " << it->second << ": " << it->first;
-			text->setString(sstream.str());
+			std::stringstream ss;
+			ss << (i + 1) << ". " << sorted[i].first << ": " << sorted[i].second;
+			text->setString(ss.str());
 			text->setFont(font);
-			text->setFillColor(sf::Color::White);
 			text->setCharacterSize(24);
+			text->setFillColor(sf::Color::White);
+
+			tableTexts.push_back(std::move(text));
 		}
 
 		hintText.setString("Press ESC to return back to main menu");
@@ -56,9 +66,7 @@ namespace ArkanoidGame
 		}
 	}
 
-	void GameStateRecordsData::Update(float timeDelta)
-	{
-	}
+	void GameStateRecordsData::Update(float timeDelta) {}
 
 	void GameStateRecordsData::Draw(sf::RenderWindow& window)
 	{
@@ -75,8 +83,8 @@ namespace ArkanoidGame
 			textsList.push_back(text.get());
 		}
 
-		sf::Vector2f tablePosition = { titleText.getGlobalBounds().left, viewSize.y / 2.f };
-		DrawTextList(window, textsList, 10.f, Orientation::Vertical, Alignment::Min, tablePosition, { 0.f, 0.f });
+		sf::Vector2f tablePosition = { viewSize.x / 2.f, 150.f };
+		DrawTextList(window, textsList, 10.f, Orientation::Vertical, Alignment::Middle, tablePosition, { 0.5f, 0.f });
 
 		hintText.setOrigin(GetTextOrigin(hintText, { 0.5f, 1.f }));
 		hintText.setPosition(viewSize.x / 2.f, viewSize.y - 50.f);

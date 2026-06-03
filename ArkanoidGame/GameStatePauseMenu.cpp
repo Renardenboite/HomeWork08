@@ -24,6 +24,14 @@ namespace ArkanoidGame
 			Application::Instance().GetGame().PopState();
 			};
 
+		auto saveItem = std::make_unique<MenuItem>();
+		saveItem->text->setString("Save Game");
+		saveItem->text->setFont(font);
+		saveItem->text->setCharacterSize(24);
+		saveItem->onPressCallback = [](MenuItem*, Menu*) {
+			Application::Instance().GetGame().SaveCurrentGame("save.dat");
+			};
+
 		auto exitItem = std::make_unique<MenuItem>();
 		exitItem->text->setString("Exit to main menu");
 		exitItem->text->setFont(font);
@@ -34,6 +42,7 @@ namespace ArkanoidGame
 		pauseMenu.childrenOrientation = Orientation::Vertical;
 		pauseMenu.childrenAlignment = Alignment::Middle;
 		pauseMenu.childrens.push_back(std::move(resumeItem));
+		pauseMenu.childrens.push_back(std::move(saveItem));
 		pauseMenu.childrens.push_back(std::move(exitItem));
 
 		menu.Init(pauseMenu, font);

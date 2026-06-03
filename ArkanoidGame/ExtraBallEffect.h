@@ -13,6 +13,8 @@ namespace ArkanoidGame
         void Revert(GameStatePlayingData& game) override;
         std::string GetDescription() const override;
 
+        EffectType GetType() const override { return EffectType::ExtraBallEffect; }
+
     private:
         std::shared_ptr<Ball> extraBall;
     };

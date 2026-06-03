@@ -1,0 +1,14 @@
+score 160
+lives 3
+level 0
+platform 466.667
+balls
+ball 572.38 86.8526 0.522325 0.852746 58.5116
+end_balls
+blocks
+1 1 1 1 1 1 1 1 0 1 1 1 1 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 1 
+multihits
+end_multihits
+end_blocks
+bonuses
+end_bonuses

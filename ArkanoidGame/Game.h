@@ -53,22 +53,23 @@ namespace ArkanoidGame
 		void SetOption(GameOptions option, bool value);
 
 		const RecordsTable& GetRecordsTable() const { return recordsTable; }
-		int GetRecordByPlayerId(const std::string& playerId) const;		
+		int GetRecordByPlayerId(const std::string& playerId) const;
 		void PopState();
 		void PushState(GameStateType stateType, bool isExclusivelyVisible);
+		void UpdateRecord(const std::string& playerId, int score);
+
+		void SaveCurrentGame(const std::string& filename);
+		void LoadGame();
 
 	private:		
 		void SwitchStateTo(GameStateType newState);
-		void Shutdown();
-		void UpdateRecord(const std::string& playerId, int score);
+		void Shutdown();		
 
 		void HandleWindowEvents(sf::RenderWindow & window);
 		bool Update(float timeDelta); 
 		void Draw(sf::RenderWindow& window);
 
-	private:
-		
-	
+	private:	
 		std::deque<std::unique_ptr<GameState>> stateStack;
 		GameStateChangeType stateChangeType = GameStateChangeType::None;
 		GameStateType pendingGameStateType = GameStateType::None;
@@ -78,6 +79,8 @@ namespace ArkanoidGame
 		RecordsTable recordsTable;
 
 		sf::Font defaultFont;
+
+		bool pendingLoadGame = false;
 
 		void LoadResources()
 		{

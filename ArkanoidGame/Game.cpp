@@ -1,6 +1,8 @@
 #include "Game.h"
 #include <assert.h>
 #include <algorithm>
+#include <fstream>
+#include <windows.h>
 #include "GameStatePlaying.h"
 #include "GameStateGameOver.h"
 #include "GameStatePauseMenu.h"
@@ -70,6 +72,21 @@ namespace ArkanoidGame
 		if (pendingGameStateType != GameStateType::None)
 		{
 			stateStack.push_back(std::make_unique<GameState>(pendingGameStateType, pendingGameStateIsExclusivelyVisible));
+
+			if (pendingLoadGame && pendingGameStateType == GameStateType::Playing)
+			{
+				auto* playingData = dynamic_cast<GameStatePlayingData*>(stateStack.back()->GetDataPtr());
+				if (playingData)
+				{
+					bool loaded = playingData->LoadGame("save.dat");
+					OutputDebugStringA(loaded ? "LoadGame: success\n" : "LoadGame: FAILED\n");
+				}
+				else
+				{
+					OutputDebugStringA("LoadGame: dynamic_cast returned nullptr\n");
+				}
+				pendingLoadGame = false;
+			}
 		}
 
 		stateChangeType = GameStateChangeType::None;
@@ -221,5 +238,32 @@ namespace ArkanoidGame
 		assert(stateStack.back()->GetType() == GameStateType::Playing);
 		auto playingData = (stateStack.back()->GetData<GameStatePlayingData>());
 		playingData->LoadNextLevel();
+	}
+
+	void Game::SaveCurrentGame(const std::string& filename)
+	{
+		for (auto it = stateStack.rbegin(); it != stateStack.rend(); ++it)
+		{
+			auto* playingData = dynamic_cast<GameStatePlayingData*>((*it)->GetDataPtr());
+			if (playingData)
+			{
+				playingData->SaveGame(filename);
+				return;
+			}
+		}
+	}
+
+	void Game::LoadGame()
+	{
+		std::ifstream testFile("save.dat");
+		if (!testFile.good())
+		{
+			OutputDebugStringA("ContinueGame: save.dat not found\n");
+			return;
+		}
+		testFile.close();
+
+		pendingLoadGame = true;
+		StartGame();
 	}
 }

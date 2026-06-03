@@ -8,6 +8,8 @@ namespace ArkanoidGame
     public:
         void Apply(GameStatePlayingData& game) override;
         void Revert(GameStatePlayingData& game) override;
-        std::string GetDescription() const override;        
+        std::string GetDescription() const override;
+
+        EffectType GetType() const override { return EffectType::WidePlatform; }
     };
 }

@@ -8,6 +8,7 @@
 #include "BonusFactory.h"
 #include <assert.h>
 #include <sstream>
+#include <fstream>
 
 namespace ArkanoidGame
 {
@@ -77,6 +78,8 @@ namespace ArkanoidGame
 
         if (lives <= 0)
         {
+            Application::Instance().GetGame().UpdateRecord(SETTINGS.PLAYER_NAME, gameScore->GetScore());
+
             gameOverSound.play();
             Application::Instance().GetGame().LooseGame();
             return true;
@@ -265,7 +268,7 @@ namespace ArkanoidGame
             if (!ballLost) ++ballIt;
         }
 
-        int removedBreakable = 0;
+        /*int removedBreakable = 0;
         blocks.erase(
             std::remove_if(blocks.begin(), blocks.end(),
                 [&](const std::shared_ptr<Block>& b) {
@@ -278,7 +281,7 @@ namespace ArkanoidGame
                 }),
             blocks.end()
         );
-        breakableBlocksCount -= removedBreakable;
+        breakableBlocksCount -= removedBreakable;*/
         if (breakableBlocksCount <= 0)
         {
             pendingLevelLoad = true;
@@ -328,6 +331,8 @@ namespace ArkanoidGame
     {
         if (currentLevel >= levelLoader.GetLevelCount() - 1)
         {
+            Application::Instance().GetGame().UpdateRecord(SETTINGS.PLAYER_NAME, gameScore->GetScore());
+
             Application::Instance().GetGame().WinGame();
             return;
         }
@@ -480,5 +485,202 @@ namespace ArkanoidGame
     void GameStatePlayingData::AddActiveEffect(std::unique_ptr<BonusEffect> effect, float duration)
     {
         activeEffects.emplace_back(std::move(effect), duration);
+    }
+
+    void GameStatePlayingData::SaveGame(const std::string& filename)
+    {
+        std::ofstream out(filename);
+        if (!out) return;
+
+        out << "score " << gameScore->GetScore() << "\n";
+        out << "lives " << lives << "\n";
+        out << "level " << currentLevel << "\n";
+
+        out << "platform " << platform->GetPosition().x << "\n";
+
+        out << "balls\n";
+        for (auto& ball : balls) 
+        {
+            sf::Vector2f pos = ball->GetPosition();
+            sf::Vector2f dir = ball->GetDirection();
+            float angle = ball->GetLastAngle();
+            out << "ball " << pos.x << " " << pos.y << " "
+                << dir.x << " " << dir.y << " " << angle << "\n";
+        }
+        out << "end_balls\n";
+
+        out << "blocks\n";
+        for (auto& block : blocks)
+        {
+            out << (block->IsDestroyed() ? "1 " : "0 ");
+        }
+        out << "\n";
+
+        out << "multihits\n";
+        for (size_t i = 0; i < blocks.size(); ++i)
+        {
+            auto* mhb = dynamic_cast<ThreeHitBlock*>(blocks[i].get());
+            if (mhb && !mhb->IsDestroyed()) 
+            {
+                out << i << " " << mhb->GetCurrentHits() << "\n";
+            }
+        }
+        out << "end_multihits\n";
+        out << "end_blocks\n";
+
+        out << "bonuses\n";
+        for (auto& bonus : bonuses) 
+        {
+            if (!bonus->IsDestroyed())
+                out << "bonus " << static_cast<int>(bonus->GetType()) << " "
+                << bonus->GetPosition().x << " " << bonus->GetPosition().y << " "
+                << bonus->GetRemainingTime() << "\n";
+        }
+        out << "end_bonuses\n";
+
+        
+        /*out << "effects\n";
+        for (auto& [effect, time] : activeEffects) {
+            out << "effect " << static_cast<int>(effect->GetType()) << " " << time << "\n";
+        }
+        out << "end_effects\n";*/
+
+        ShowMessage("Game Saved!", 1.5f);
+    }
+
+    bool GameStatePlayingData::LoadGame(const std::string& filename)
+    {
+        std::ifstream in(filename);
+        if (!in) return false;
+
+        std::string token;
+        int scoreVal, livesVal, levelVal;
+        float platformX;
+
+        in >> token >> scoreVal;
+        in >> token >> livesVal;
+        in >> token >> levelVal;
+        in >> token >> platformX;
+
+        std::shared_ptr<Platform> platformShared;
+        for (auto& obj : gameObjects) 
+        {
+            platformShared = std::dynamic_pointer_cast<Platform>(obj);
+            if (platformShared) break;
+        }
+
+        balls.clear();
+        blocks.clear();
+        bonuses.clear();
+        activeEffects.clear();
+        gameObjects.clear();
+
+        if (platformShared)
+        {
+            gameObjects.push_back(platformShared);
+            platform = platformShared.get();
+        }
+
+        if (platform)
+        {
+            platform->SetPosition({ platformX, platform->GetPosition().y });
+        }
+
+        currentLevel = levelVal;
+        createBlocks();
+
+        gameScore = std::make_shared<GameScore>();
+        gameScore->SetScore(scoreVal);
+        lives = livesVal;
+
+        in >> token;
+        while (in >> token && token != "end_balls") 
+        {
+            if (token == "ball") {
+                float x, y, dx, dy, angle;
+                in >> x >> y >> dx >> dy >> angle;
+                auto ball = std::make_shared<Ball>(sf::Vector2f{ x, y });
+                ball->SetDirection({ dx, dy });
+                ball->SetAngle(angle);
+                ball->AddObserver(weak_from_this());
+                balls.push_back(ball);
+                gameObjects.push_back(ball);
+            }
+        }
+
+        in >> token;
+        std::vector<int> destroyedFlags;
+        int flag;
+        while (in >> flag) 
+        {
+            destroyedFlags.push_back(flag);
+            if (in.peek() == '\n') break;
+        }
+
+        size_t idx = 0;
+        for (auto& block : blocks)
+        {
+            if (idx < destroyedFlags.size() && destroyedFlags[idx] == 1)
+            {
+                block->hitCount = 0;
+            }
+            ++idx;
+        }
+
+        in >> token;
+        while (in >> token && token != "end_multihits") 
+        {
+            int blockIndex, hits;
+            in >> blockIndex >> hits;
+            if (blockIndex >= 0 && blockIndex < static_cast<int>(blocks.size())) 
+            {
+                auto* mhb = dynamic_cast<ThreeHitBlock*>(blocks[blockIndex].get());
+                if (mhb) mhb->SetCurrentHits(hits);
+            }
+        }
+        in >> token;
+
+        in >> token;
+        while (in >> token && token != "end_bonuses")
+        {
+            if (token == "bonus") 
+            {
+                int typeInt;
+                float x, y, time;
+                in >> typeInt >> x >> y >> time;
+                auto bonus = BonusFactory::Create(static_cast<BonusType>(typeInt), sf::Vector2f{ x, y });
+                if (bonus) 
+                {
+                    bonus->SetRemainingTime(time);
+                    bonuses.push_back(std::move(bonus));
+                }
+            }
+        }
+
+        for (auto& block : blocks)
+        {
+            block->AddObserver(gameScore);
+        }
+
+        breakableBlocksCount = std::count_if(blocks.begin(), blocks.end(), [](auto& b) {
+            return !dynamic_cast<UnbreackableBlock*>(b.get()) && !b->IsDestroyed();
+            });
+
+        return true;
+    }
+
+    void GameStatePlayingData::ShowMessage(const std::string& msg, float duration)
+    {
+        if (!font) return;
+
+        sf::Text text;
+        text.setFont(*font);
+        text.setString(msg);
+        text.setCharacterSize(30);
+        text.setFillColor(sf::Color::Green);
+        sf::FloatRect bounds = text.getLocalBounds();
+        text.setOrigin(bounds.left + bounds.width / 2.f, bounds.top + bounds.height / 2.f);
+        text.setPosition(SETTINGS.SCREEN_WIDTH / 2.f, SETTINGS.SCREEN_HEIGHT / 3.f);
+        activeBonusTexts.push_back({ text, duration });
     }
 }

@@ -24,6 +24,8 @@ namespace ArkanoidGame
         virtual int GetScoreValue() const { return 10; }
         virtual bool IsTimerStarted() const { return false; }
 
+        virtual void Destroy() { hitCount = 0; }
+
         int hitCount = 1;
 
     protected:

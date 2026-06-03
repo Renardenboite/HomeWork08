@@ -27,6 +27,9 @@ namespace ArkanoidGame
         void UpdateAngleFromDirection();
         float GetMultiplySpeed() const { return multiplySpeed; }
 
+        const sf::Vector2f& GetDirection() const { return direction; }
+        void SetAngle(float angle) { lastAngle = angle; }
+
     private:
         void OnHit() override {}
         sf::Vector2f direction;

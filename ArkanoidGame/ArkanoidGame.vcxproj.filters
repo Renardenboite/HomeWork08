@@ -85,6 +85,9 @@
     <ClCompile Include="ExtraBallEffect.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="BonusEffectFactory.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -176,6 +179,9 @@
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="ExtraBallEffect.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="BonusEffectFactory.h">
       <Filter>Sources</Filter>
     </ClInclude>
   </ItemGroup>

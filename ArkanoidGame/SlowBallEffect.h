@@ -12,6 +12,8 @@ namespace ArkanoidGame
         void Revert(GameStatePlayingData& game) override;
         std::string GetDescription() const override;
 
+        EffectType GetType() const override { return EffectType::SlowBallEffect; }
+
     private:
         std::unordered_map<Ball*, float> originalMultipliers;
     };

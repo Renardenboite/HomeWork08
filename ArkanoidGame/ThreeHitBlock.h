@@ -7,10 +7,22 @@ namespace ArkanoidGame {
     {
     public:
         ThreeHitBlock(const sf::Vector2f& position, float width, float height,
-            const sf::Color& color = sf::Color::Magenta);
+                      const sf::Color& color = sf::Color::Magenta);
         void Update(float timeDelta) override;
         bool GetCollision(std::shared_ptr<Collidable> collidableObject) const override;
         void Draw(sf::RenderWindow& window) override;
+
+        int GetCurrentHits() const { return currentHits; }
+        void SetCurrentHits(int hits)
+        {
+            currentHits = hits;
+            StageChange();
+            if (currentHits >= maxHits && !isBreaking)
+            {
+                isBreaking = true;
+                StartTimer(SETTINGS.BREAK_DELAY);
+            }
+        }
 
     protected:
         void OnHit() override;

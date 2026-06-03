@@ -49,6 +49,8 @@ namespace ArkanoidGame
 		void Draw(sf::RenderWindow& window);
 		void HandleWindowEvent(sf::Event& event);
 
+		GameStateData* GetDataPtr() const { return data.get(); }
+
 	private:
 		GameStateType type = GameStateType::None;
 		std::shared_ptr<GameStateData> data = nullptr;

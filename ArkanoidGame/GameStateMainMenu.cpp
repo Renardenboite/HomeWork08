@@ -38,6 +38,14 @@ namespace ArkanoidGame
             game.SetOption(GameOptions::WithAcceleration, newOptionValue);
             item->text->setString("With Acceleration: " + std::string(newOptionValue ? "On" : "Off")); };
 
+        auto continueGame = std::make_unique<MenuItem>();
+        continueGame->text->setString("Load Game");
+        continueGame->text->setFont(font);
+        continueGame->text->setCharacterSize(24);
+        continueGame->onPressCallback = [](MenuItem*, Menu*) {
+            Application::Instance().GetGame().LoadGame();
+            };
+
         auto options = std::make_unique<MenuItem>();
         options->text->setString("Options");
         options->text->setFont(font);
@@ -96,6 +104,7 @@ namespace ArkanoidGame
         mainMenu->childrenAlignment = Alignment::Middle;
         mainMenu->childrenSpacing = 10.f;
         mainMenu->childrens.push_back(std::move(startGame));
+        mainMenu->childrens.push_back(std::move(continueGame));
         mainMenu->childrens.push_back(std::move(options));
         mainMenu->childrens.push_back(std::move(recordsItem));
         mainMenu->childrens.push_back(std::move(exitGameItem));
@@ -146,5 +155,4 @@ namespace ArkanoidGame
 
 		menu.Draw(window, viewSize / 2.f, { 0.5f, 0.f });
 	}
-
 }

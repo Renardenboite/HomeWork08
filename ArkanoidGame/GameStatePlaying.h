@@ -8,6 +8,7 @@
 #include "Block.h"
 #include "Bonus.h"
 #include "BonusEffect.h"
+#include "BonusEffectFactory.h"
 #include "GameScore.h"
 #include "LevelLoader.h"
 #include "BlockFactory.h"
@@ -47,6 +48,11 @@ namespace ArkanoidGame
         void RemoveBall(std::shared_ptr<Ball> ball);
         void AddBonus(std::unique_ptr<Bonus> bonus);
         void AddActiveEffect(std::unique_ptr<BonusEffect> effect, float duration);
+
+        void SaveGame(const std::string& filename);
+        bool LoadGame(const std::string& filename);
+        void ShowMessage(const std::string& text, float duration = 2.0f);
+
     private:
         void createBlocks();
         void updateBonuses(float timeDelta);
@@ -75,6 +81,7 @@ namespace ArkanoidGame
         Platform* platform = nullptr;
 
         std::shared_ptr<GameScore> gameScore;
+        int currentScore = 0;
         int lives = 3;
         int breakableBlocksCount = 0;
 

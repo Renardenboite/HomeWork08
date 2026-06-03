@@ -165,6 +165,7 @@
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="BlockFactory.cpp" />
     <ClCompile Include="Bonus.cpp" />
+    <ClCompile Include="BonusEffectFactory.cpp" />
     <ClCompile Include="BonusFactory.cpp" />
     <ClCompile Include="ExtraBallEffect.cpp" />
     <ClCompile Include="GameScore.cpp" />
@@ -194,6 +195,7 @@
     <ClInclude Include="BlockFactory.h" />
     <ClInclude Include="Bonus.h" />
     <ClInclude Include="BonusEffect.h" />
+    <ClInclude Include="BonusEffectFactory.h" />
     <ClInclude Include="BonusFactory.h" />
     <ClInclude Include="Collidable.h" />
     <ClInclude Include="ExtraBallEffect.h" />

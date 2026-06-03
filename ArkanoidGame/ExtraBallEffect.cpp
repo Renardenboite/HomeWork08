@@ -24,6 +24,7 @@ namespace ArkanoidGame
     {
         if (extraBall)
         {
+            game.RemoveBall(extraBall);
             extraBall.reset();
         }
     }
