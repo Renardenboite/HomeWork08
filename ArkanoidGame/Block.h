@@ -21,7 +21,6 @@ namespace ArkanoidGame
 
         virtual bool IsDestroyed() const { return hitCount <= 0; }
         virtual void OnHit();
-        virtual int GetScoreValue() const { return 10; }
         virtual bool IsTimerStarted() const { return false; }
 
         virtual void Destroy() { hitCount = 0; }
@@ -50,8 +49,6 @@ namespace ArkanoidGame
         void FinalAction() override;
         void EachTickAction(float deltaTime) override;
         bool IsTimerStarted() const override { return isTimerStarted_; }
-
-        int GetScoreValue() const override { return 20; }
     };
 
     class UnbreackableBlock : public Block
@@ -61,8 +58,6 @@ namespace ArkanoidGame
             const sf::Color& color = sf::Color(105, 105, 105));
         void OnHit() override;
         void Update(float timeDelta) override {}
-
-        int GetScoreValue() const override { return 0; }
     };
 
     class GlassBlock : public Block, public IDelayedAction
@@ -77,8 +72,6 @@ namespace ArkanoidGame
 
         void FinalAction() override;
         void EachTickAction(float deltaTime) override;
-
-        int GetScoreValue() const override { return 30; }
 
     private:
         mutable bool collisionProcessed = false;

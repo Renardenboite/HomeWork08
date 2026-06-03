@@ -40,7 +40,7 @@ namespace ArkanoidGame
 
         const float ACCELERATION = 200.f;
 
-        const int MAX_APPLES = 80;
+        const int MAX_APPLES = 600;
         const float TIME_PER_FRAME = 1.f / 60.f;
 
         const int MAX_RECORDS_TABLE_SIZE = 5;

@@ -1,12 +1,12 @@
-score 160
+score 650
 lives 3
-level 0
-platform 466.667
+level 1
+platform 342.666
 balls
-ball 572.38 86.8526 0.522325 0.852746 58.5116
+ball 752.536 22.723 0.452194 -0.89192 30
 end_balls
 blocks
-1 1 1 1 1 1 1 1 0 1 1 1 1 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 1 
+1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 1 1 1 0 1 1 1 1 1 0 0 0 0 1 0 0 0 0 0 0 1 1 1 1 
 multihits
 end_multihits
 end_blocks

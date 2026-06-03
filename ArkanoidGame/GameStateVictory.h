@@ -17,5 +17,6 @@ namespace ArkanoidGame
         sf::Font font;
         sf::Text victoryText;
         sf::Text hintText;
+        std::vector<std::unique_ptr<sf::Text>> recordsTableTexts;
     };
 }

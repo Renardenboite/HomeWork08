@@ -268,29 +268,29 @@ namespace ArkanoidGame
             if (!ballLost) ++ballIt;
         }
 
-        /*int removedBreakable = 0;
-        blocks.erase(
-            std::remove_if(blocks.begin(), blocks.end(),
-                [&](const std::shared_ptr<Block>& b) {
-                    if (b->IsDestroyed() && !b->IsTimerStarted()) {
-                        if (!dynamic_cast<UnbreackableBlock*>(b.get()))
-                            ++removedBreakable;
-                        return true;
-                    }
-                    return false;
-                }),
-            blocks.end()
-        );
-        breakableBlocksCount -= removedBreakable;*/
-        if (breakableBlocksCount <= 0)
+        int aliveBreakable = 0;
+        for (const auto& block : blocks)
         {
-            pendingLevelLoad = true;
-            breakableBlocksCount = 0;
+            if (!dynamic_cast<UnbreackableBlock*>(block.get()) && !block->IsDestroyed())
+                ++aliveBreakable;
+        }
+
+        if (aliveBreakable == 0 && !blocks.empty())
+        {
+            if (currentLevel >= levelLoader.GetLevelCount() - 1)
+            {
+                Application::Instance().GetGame().UpdateRecord(SETTINGS.PLAYER_NAME, gameScore->GetScore());
+                Application::Instance().GetGame().WinGame();
+            }
+            else
+            {
+                pendingLevelLoad = true;
+            }
         }
 
         updateActiveEffects(timeDelta);
 
-        for (auto it = activeBonusTexts.begin(); it != activeBonusTexts.end(); ) 
+        for (auto it = activeBonusTexts.begin(); it != activeBonusTexts.end(); )
         {
             it->remainingTime -= timeDelta;
             if (it->remainingTime <= 0.f)
@@ -299,7 +299,7 @@ namespace ArkanoidGame
                 ++it;
         }
 
-        for (auto it = activeLifeMessages.begin(); it != activeLifeMessages.end(); ) 
+        for (auto it = activeLifeMessages.begin(); it != activeLifeMessages.end(); )
         {
             it->remainingTime -= timeDelta;
             if (it->remainingTime <= 0.f)
